@@ -1,0 +1,13 @@
+-login status speichern
+-signup
+-logout button
+-game
+-game decision
+-score speichern
+-highscores abrufen
+-highscores anzeigen
+-faq schreiben
+-password hashen
+-profile
+-navigation
+-user data in db
