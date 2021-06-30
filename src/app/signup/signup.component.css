@@ -1,0 +1,25 @@
+.registration-card {
+    width: 100%;
+    height: 100%;
+  }
+
+  
+.registration-card mat-card{
+    height: 70vh;
+    width: 30vw;
+    background-color: rgb(168, 165, 159);
+}
+
+.rg-card{
+    height: 60vh;
+    width: 40vw;
+    background-color: white;
+}
+
+.registration-card mat-form-field{
+    background-color: rgb(168, 164, 164);
+}
+
+.register-card-btn{
+    margin-top: 5px;
+}
