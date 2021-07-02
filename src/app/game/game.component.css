@@ -10,6 +10,7 @@
     border: 1px solid black;
     width: 40%;
     height: auto;
+    color: white;
     font-family: cursive;
     display: flex;
     flex-direction: column;
