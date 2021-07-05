@@ -1,3 +1,4 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -5,34 +6,60 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css'],
 })
-
 export class GameComponent implements OnInit {
-  private puzzleBoard: PuzzleBoard = new PuzzleBoard();
+  private puzzleBoard: PuzzleBoard;
   private cellSwapper: CellSwapperEventArgs;
-  // private gameTimer: Timer = new Timer();
 
-  cells = this.puzzleBoard.Cells;
+  private gameTimer: Timer = new Timer();
 
-  noOfTries = 0;
-  time = 0;
-  // time = this.gameTimer.time;
-  private counter: number; // when counter = 2 the can two images be swapped
+  private musicSound = new Audio('../../assets/music.mp3');
+
+  public score = 0;
+
+  public time = this.gameTimer.Time;
 
   constructor() {
+    this.puzzleBoard = new PuzzleBoard();
     this.puzzleBoard.initializePuzzleBoard(2);
     this.cellSwapper = new CellSwapperEventArgs();
-    // this.gameTimer.startTimer();
+    this.gameTimer.startTimer(this.IsPuzzleSolved());
+    this.ShowTime();
+    // this.musicSound.play();
   }
 
-  private ChangeOpacity(cell : Cell): void {
+  public get Cells(): Cell[] {
+    return this.puzzleBoard.Cells;
+  }
+
+  private CalculateScore() : number{
+    let score: number;
+    score = 100 - this.time;
+    if (score < 0) {
+      return 0;
+    }
+    return score;
+  }
+
+  private ShowTime() : void {
+    if (!this.IsPuzzleSolved()) {
+      this.time = this.gameTimer.Time;
+
+      setTimeout(() => {
+        this.ShowTime();
+        this.score = this.CalculateScore();
+      }, 1000);
+    }
+  }
+
+  private ChangeOpacity(cell): void {
     this.puzzleBoard.Cells.forEach((element) => {
-      if (element.ID === cell.ID) {
+      if (element.ID === cell.target.id) {
         element.SetOpacity('0.5');
       }
     });
   }
 
-  private IsWinner(): boolean {
+  public IsPuzzleSolved(): boolean {
     const solvedPuzzlesIndex = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
     for (let index = 0; index < this.puzzleBoard.Cells.length; index++) {
@@ -46,39 +73,53 @@ export class GameComponent implements OnInit {
 
     return true;
   }
-  public selectImage(cell): void {
-    this.noOfTries++;
-    // console.log(cell.target );
 
-    this.ChangeOpacity(new Cell(cell.target.id, cell.target.image, cell.target.opacity));
+  public selectImage(cell): void {
+
+    this.ChangeOpacity(cell);
 
     this.puzzleBoard.SetCells(
       this.cellSwapper.FireCellSwapperEvent(this.puzzleBoard.Cells)
     );
-    if (this.IsWinner()) {
+
+    if (this.IsPuzzleSolved()) {
       console.log('Won');
+      this.musicSound.pause();
     } else {
       console.log('Not yet');
     }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 }
 
 class Timer {
+
   private time: number;
+
+  constructor() { this.time = 0 }
+
   public get Time(): number {
     return this.time;
   }
 
-  public startTimer() {
-    // todo
+  private setTime(time: number) {
+    this.time = time;
+  }
+
+
+  public startTimer(isGameFinished: boolean) {
+    if (!isGameFinished) {
+      this.setTime(this.Time + 1);
+      setTimeout(() => {
+        this.startTimer(isGameFinished);
+      }, 1000);
+    }
   }
 }
 
 class CellSwapperEventArgs {
-  
-  private ResetOpacity(cells : Cell[]): Cell[] {
+  private ResetOpacity(cells): Cell[] {
     cells.forEach((element) => {
       if (element.Opacity === '0.5') {
         element.SetOpacity('1');
@@ -89,11 +130,9 @@ class CellSwapperEventArgs {
 
   public FireCellSwapperEvent(cells: Cell[]): Cell[] {
     let counter = 0;
-    
-    let cellOne: Cell = new Cell("0","none", "1"); // initialized it just to avoid error.
-
-    let indexOfFirstSelectedCell: number = 0;
-    let indexOfSecondSelectedCell: number = 0;
+    let cellOne!: Cell;
+    let indexOfFirstSelectedCell!: number;
+    let indexOfSecondSelectedCell!: number;
 
     for (let cellIndex = 0; cellIndex < cells.length; cellIndex++) {
       if (cells[cellIndex].Opacity === '0.5') {

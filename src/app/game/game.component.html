@@ -5,11 +5,11 @@
                 <p>Time: {{time}} </p>
             </div>
             <div class="tries">
-                <p>Tries: {{noOfTries}}</p>
+                <p>Score: {{score}}</p>
             </div>
         </div>
         <div class="box">
-            <img (click)="selectImage($event);" *ngFor="let cell of cells" src= {{cell.Image}} id={{cell.ID}} [style.opacity]= "cell.Opacity" alt="not Found exception">
+            <img (click)="selectImage($event);" *ngFor="let cell of Cells" src= {{cell.Image}} id={{cell.ID}} [style.opacity]= "cell.Opacity" alt="not Found exception">
         </div>
     </div>
 </div>
