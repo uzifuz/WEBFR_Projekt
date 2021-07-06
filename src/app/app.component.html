@@ -310,10 +310,10 @@
   <img
     width="40"
     alt="Logo"
-    src="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fstmarthayouth.files.wordpress.com%2F2013%2F01%2Fblobfish2.jpeg&f=1&nofb=1"
+    src="https://www.technikum-wien.at/sites/default/files/logo-300x160.png"
   />
   <button
-    [style.visibility]="(isLoggedIn())?'visible' : 'hidden'"
+    [style.visibility]="isLoggedIn() ? 'visible' : 'hidden'"
     (click)="logout()"
     color="primary"
     mat-raised-button
@@ -387,12 +387,25 @@
   </div>
 
   <a routerLink="/">home</a>
-  <a routerLink="/login">login</a>
-  <a routerLink="/signup">sign up</a>
   <a routerLink="/score">score</a>
   <a routerLink="/game">game</a>
-  <a routerLink="/profile">profile</a>
   <a routerLink="/faq">faq</a>
+  <a
+    routerLink="/profile"
+    [style.visibility]="isLoggedIn() ? 'visible' : 'hidden'"
+    >profile</a
+  >
+  <a
+    routerLink="/login"
+    [style.visibility]="!isLoggedIn() ? 'visible' : 'hidden'"
+    >login</a
+  >
+  <a
+    routerLink="/signup"
+    [style.visibility]="!isLoggedIn() ? 'visible' : 'hidden'"
+    >sign up</a
+  >
+
   <router-outlet></router-outlet>
   <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
   <!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->

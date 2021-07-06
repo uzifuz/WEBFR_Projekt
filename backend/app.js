@@ -74,6 +74,8 @@ app.post("/signup", (req, res, next) => {
   var doc = {
     email: req.body.email,
     password: req.body.password,
+    address: req.body.address,
+    postCode: req.body.postCode,
   };
   console.log(doc);
 
@@ -100,6 +102,27 @@ app.post("/signup", (req, res, next) => {
       });
     }
     res.send();
+  });
+});
+
+app.get("/profile", (req, res, next) => {
+  db.findOne({ email: req.query.email }, function (err, doc) {
+    if (doc == null) {
+      console.log("email: " + req.query.email + " not found");
+      res.status(401).json({ message: "email not found" });
+    } else if (doc.token != req.query.token) {
+      console.log("wrong token");
+      res.status(401).json({ message: "wrong token" });
+    } else {
+      res.status(200).json({
+        message: "profile data received",
+        email: doc.email,
+        highscore: doc.highscore,
+        address: doc.address,
+        postCode: doc.postCode,
+      });
+    }
+    //res.send();
   });
 });
 
