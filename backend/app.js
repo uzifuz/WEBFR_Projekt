@@ -117,7 +117,7 @@ app.get("/profile", (req, res, next) => {
       res.status(200).json({
         message: "profile data received",
         email: doc.email,
-        highscore: doc.highscore,
+        highscore: doc.score,
         address: doc.address,
         postCode: doc.postCode,
       });
@@ -130,76 +130,90 @@ app.get("/profile", (req, res, next) => {
 app.post("/highscore", (req, res, next) => {
   const highscoredata = JSON.stringify(req.body);
   console.log(highscoredata);
-  var doc = {
-    token: req.body['token'],
-    score: req.body['score'],
-    email: req.body['email'],
-  };
-
-  db.find({token: req.body['token'] }, function (err, docs) {
-
-    if (doc.email == null || doc.token == null) {
-      console.log("invalid token");
-      res.status(401).json({
-        message: "invalid token",
-      });
-    } 
-    else {
-    
-    console.log("valid token");
-    console.log(docs);
-    if (docs.length > 0) {
-      docs.forEach(element => {
-        if(element.score < req.body['score']){
-          console.log("old score is smaller then new");
-          db.update(
-            { email: req.body['email'] },
-            { $set: { score: req.body['score'] } },
-            function (err, numreplaced)
-            {
-              if (err) console.log(err);
-            }
-          );
-        }
-
-      });
+  // var doc = {
+  //   token: req.body["token"],
+  //   score: req.body["score"],
+  //   email: req.body["email"],
+  // };
+  db.findOne({ email: req.body.email }, function (err, doc) {
+    if (doc == null) {
+      console.log("email: " + req.body.email + " not found");
+      res.status(401).json({ message: "email not found" });
+    } else if (doc.token != req.body.token) {
+      console.log("wrong token");
+      res.status(401).json({ message: "wrong token" });
+    } else {
+      //doc.score = req.body.score;
+      if (isNaN(doc.score) || doc.score < req.body.score) {
+        db.update(
+          { email: req.body.email },
+          { $set: { score: req.body.score } },
+          function (err, numreplaced) {
+            if (err) console.log(err);
+          }
+        );
+        res.status(200).json({
+          message: "highscore posted",
+        });
+      } else {
+        res.status(200).json({ message: "score posted" });
+      }
     }
-    else
-    {
-      db.insert(doc, function (err, newDoc) {
-        if (err) console.log(err);
-        else{
-          console.log("success");
-        }
-      });
-      console.log("200 score posted.");
-      res.status(200).json({
-        message: "score posted",
-      });
-    }
-  }
+    res.send();
   });
 
-  console.log(doc);
+  // db.find({ token: req.body["token"] }, function (err, docs) {
+  //   if (doc.email == null || doc.token == null) {
+  //     console.log("invalid token");
+  //     res.status(401).json({
+  //       message: "invalid token",
+  //     });
+  //   } else {
+  //     console.log("valid token");
+  //     console.log(docs);
+  //     if (docs.length > 0) {
+  //       docs.forEach((element) => {
+  //         if (element.score < req.body["score"]) {
+  //           console.log("old score is smaller then new");
+  //           db.update(
+  //             { email: req.body["email"] },
+  //             { $set: { score: req.body["score"] } },
+  //             function (err, numreplaced) {
+  //               if (err) console.log(err);
+  //             }
+  //           );
+  //         }
+  //       });
+  //     } else {
+  //       db.insert(doc, function (err, newDoc) {
+  //         if (err) console.log(err);
+  //         else {
+  //           console.log("success");
+  //         }
+  //       });
+  //       console.log("200 score posted.");
+  //       res.status(200).json({
+  //         message: "score posted",
+  //       });
+  //     }
+  //   }
+  // });
 });
 
 // fetching scores from db.
 app.get("/highscore", (req, res, next) => {
   console.log("fetching scores");
   db.find({}, function (err, docs) {
-    if (err)
-    console.log(err);
+    if (err) console.log(err);
     console.log(JSON.stringify(docs));
-    if(docs.length >0){
+    if (docs.length > 0) {
       console.log(docs);
       res.status(200).json(docs);
-      res.send();
-    }
-    else{
+      //res.send();
+    } else {
       console.log("empty");
     }
   });
 });
-
 
 module.exports = app;

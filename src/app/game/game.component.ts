@@ -38,7 +38,8 @@ export class GameComponent implements OnInit {
     this.cellSwapper = new CellSwapperEventArgs();
     this.gameTimer.startTimer(this.IsPuzzleSolved());
     this.ShowTime();
-    this.musicSound.play();
+    // this.musicSound.play();
+    console.log(this.router.url);
   }
 
   public get Cells(): Cell[] {
