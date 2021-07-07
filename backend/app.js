@@ -126,45 +126,80 @@ app.get("/profile", (req, res, next) => {
   });
 });
 
+// inserting scores in db.
 app.post("/highscore", (req, res, next) => {
   const highscoredata = JSON.stringify(req.body);
   console.log(highscoredata);
-  db.findOne({ token: req.body.token }, function (err, doc) {
-    if (doc == null) {
+  var doc = {
+    token: req.body['token'],
+    score: req.body['score'],
+    email: req.body['email'],
+  };
+
+  db.find({token: req.body['token'] }, function (err, docs) {
+
+    if (doc.email == null || doc.token == null) {
       console.log("invalid token");
       res.status(401).json({
         message: "invalid token",
       });
-    } else {
-      db.update(
-        { token: req.body.token },
-        {
-          $set: { highscore: req.body.highscore },
-        },
-        function (err, numreplaced) {
-          if (err) console.log(err);
+    } 
+    else {
+    
+    console.log("valid token");
+    console.log(docs);
+    if (docs.length > 0) {
+      docs.forEach(element => {
+        if(element.score < req.body['score']){
+          console.log("old score is smaller then new");
+          db.update(
+            { email: req.body['email'] },
+            { $set: { score: req.body['score'] } },
+            function (err, numreplaced)
+            {
+              if (err) console.log(err);
+            }
+          );
         }
-      );
-      res.status(200).json({ message: "highscore posted" });
+
+      });
     }
-    res.send();
+    else
+    {
+      db.insert(doc, function (err, newDoc) {
+        if (err) console.log(err);
+        else{
+          console.log("success");
+        }
+      });
+      console.log("200 score posted.");
+      res.status(200).json({
+        message: "score posted",
+      });
+    }
+  }
+  });
+
+  console.log(doc);
+});
+
+// fetching scores from db.
+app.get("/highscore", (req, res, next) => {
+  console.log("fetching scores");
+  db.find({}, function (err, docs) {
+    if (err)
+    console.log(err);
+    console.log(JSON.stringify(docs));
+    if(docs.length >0){
+      console.log(docs);
+      res.status(200).json(docs);
+      res.send();
+    }
+    else{
+      console.log("empty");
+    }
   });
 });
 
-//doesn't f*#$ing work
-app.get("/highscore", (req, res, next) => {
-  console.log("get highscores");
-  db.find({ highscores: { $exists: true } }, function (err, docs) {
-    console.log(docs.length);
-    let scores = "{highscores: [";
-    docs.forEach((element) => {
-      scores += JSON.stringify(element);
-    });
-    scores += "]}";
-    res.status(200).json(scores);
-    console.log("found highscores:\n" + scores);
-    res.send();
-  });
-});
 
 module.exports = app;

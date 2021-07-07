@@ -1,3 +1,25 @@
-p{
+.score-card{
+    width: 20rem;
+    height: auto;
+    background-color: rgb(163, 140, 110);
+    border: 1px solid black;
+}
 
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(231, 201, 161);
+    border-radius: 0;
+    border: 1px solid black;
+}
+
+.player-detail{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    background-color: azure;
+    color: black;
+    box-shadow: 0px 0px 4px 0px red;
+    border: 1px solid black;
 }

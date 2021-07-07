@@ -1,1 +1,18 @@
-<p>score works!</p>
+<mat-card class="score-card">
+    <mat-card class="header">
+        <mat-card class="sub-header-one">
+            <div>Email</div>
+        </mat-card>
+        <mat-card class="sub-header-one">
+            <div>Score</div>
+        </mat-card>
+    </mat-card>
+
+    <mat-card class="score-card-body">
+        <mat-card class="player-detail" *ngFor="let score of userScores">
+            <div class="playerEamil">{{score.UserEmail}}</div>
+            <div class="playerScore">{{score.UserScore}}</div>
+        </mat-card>
+    </mat-card>
+
+</mat-card>

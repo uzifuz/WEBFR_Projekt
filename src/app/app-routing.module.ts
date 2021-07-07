@@ -12,7 +12,8 @@ const routes: Routes = [
   { path: 'signup', component: SignupComponent },
   { path: 'score', component: ScoreComponent },
   { path: 'faq', component: FaqComponent },
-  { path: 'game', component: GameComponent },
+  { path: 'puzzle1', component: GameComponent },
+  { path: 'puzzle2', component: GameComponent },
   { path: 'profile', component: ProfileComponent },
 ];
 

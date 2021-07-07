@@ -1,5 +1,7 @@
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { THIS_EXPR, ThrowStmt } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -18,20 +20,33 @@ export class GameComponent implements OnInit {
 
   public time = this.gameTimer.Time;
 
-  constructor() {
+  httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  };
+
+  constructor(private http: HttpClient, private router: Router) {
+    
     this.puzzleBoard = new PuzzleBoard();
-    this.puzzleBoard.initializePuzzleBoard(2);
+
+    if (this.router.url === "/puzzle1") {
+      this.puzzleBoard.initializePuzzleBoard(1);
+    }
+    else {
+      this.puzzleBoard.initializePuzzleBoard(2);
+    }
+
     this.cellSwapper = new CellSwapperEventArgs();
     this.gameTimer.startTimer(this.IsPuzzleSolved());
     this.ShowTime();
     // this.musicSound.play();
+    console.log(this.router.url);
   }
 
   public get Cells(): Cell[] {
     return this.puzzleBoard.Cells;
   }
 
-  private CalculateScore() : number{
+  private CalculateScore(): number {
     let score: number;
     score = 100 - this.time;
     if (score < 0) {
@@ -40,7 +55,7 @@ export class GameComponent implements OnInit {
     return score;
   }
 
-  private ShowTime() : void {
+  private ShowTime(): void {
     if (!this.IsPuzzleSolved()) {
       this.time = this.gameTimer.Time;
 
@@ -76,6 +91,7 @@ export class GameComponent implements OnInit {
 
   public selectImage(cell): void {
 
+    // this.StoreScoreInDatabase(); // testing
     this.ChangeOpacity(cell);
 
     this.puzzleBoard.SetCells(
@@ -83,14 +99,34 @@ export class GameComponent implements OnInit {
     );
 
     if (this.IsPuzzleSolved()) {
-      console.log('Won');
+      this.StoreScoreInDatabase();
+      console.log("won");
+      
       this.musicSound.pause();
     } else {
       console.log('Not yet');
     }
   }
 
+
+
   ngOnInit(): void { }
+
+  private StoreScoreInDatabase() {
+    const token = localStorage.getItem('token');
+    const email = localStorage.getItem('user');
+    const data = {
+      "score": this.score,
+      "token": token,
+      "email": email
+    };
+
+    console.log(this.score + " saving score test starts");
+    this.http
+      .post<{ message: string }>("http://localhost:3000/highscore", data).subscribe((res) => {
+        alert(res.message);
+      });
+  }
 }
 
 class Timer {
@@ -197,8 +233,12 @@ class PuzzleBoard {
     let imgFolder: string;
 
     if (puzzleBoardType == 1) {
+      console.log(1);
+
       imgFolder = '../../assets/puzzleOne/';
     } else {
+      console.log(1);
+
       imgFolder = '../../assets/puzzleTwo/';
     }
     let puzzleParts = this.shufflePuzzleParts();

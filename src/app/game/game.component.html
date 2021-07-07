@@ -1,15 +1,16 @@
 <div class="main">
-    <div class="main-container">
-        <div class="header">
-            <div class="timer">
+    <mat-card class="main-container">
+        <mat-card class="header">
+            <mat-card class="timer">
                 <p>Time: {{time}} </p>
-            </div>
-            <div class="tries">
+            </mat-card>
+            <mat-card class="timer">
                 <p>Score: {{score}}</p>
-            </div>
-        </div>
-        <div class="box">
-            <img (click)="selectImage($event);" *ngFor="let cell of Cells" src= {{cell.Image}} id={{cell.ID}} [style.opacity]= "cell.Opacity" alt="not Found exception">
-        </div>
-    </div>
+            </mat-card>
+        </mat-card>
+        <mat-card class="box">
+                <img (click)="selectImage($event);" *ngFor="let cell of Cells" src={{cell.Image}} id={{cell.ID}}
+                    [style.opacity]="cell.Opacity" alt="not Found exception">
+        </mat-card>
+    </mat-card>
 </div>
