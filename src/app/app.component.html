@@ -366,7 +366,31 @@
       </g>
     </svg>
 
-    <span>{{ title }} app is running!</span>
+    <span><a mat-raised-button color="accent" routerLink="/">home</a>
+      <a mat-raised-button color="accent" routerLink="/score">score</a>
+      <a mat-raised-button color="accent" routerLink="/game">game</a>
+      <a mat-raised-button color="accent" routerLink="/faq">faq</a>
+      <a
+        color="accent"
+        mat-raised-button
+        routerLink="/profile"
+        [style.visibility]="isLoggedIn() ? 'visible' : 'hidden'"
+        >profile</a
+      >
+      <a
+        color="accent"
+        mat-raised-button
+        routerLink="/login"
+        [style.visibility]="!isLoggedIn() ? 'visible' : 'hidden'"
+        >login</a
+      >
+      <a
+        color="accent"
+        mat-raised-button
+        routerLink="/signup"
+        [style.visibility]="!isLoggedIn() ? 'visible' : 'hidden'"
+        >sign up</a
+      ></span>
 
     <svg
       id="rocket-smoke"
@@ -385,27 +409,7 @@
       />
     </svg>
   </div>
-
-  <a routerLink="/">home</a>
-  <a routerLink="/score">score</a>
-  <a routerLink="/game">game</a>
-  <a routerLink="/faq">faq</a>
-  <a
-    routerLink="/profile"
-    [style.visibility]="isLoggedIn() ? 'visible' : 'hidden'"
-    >profile</a
-  >
-  <a
-    routerLink="/login"
-    [style.visibility]="!isLoggedIn() ? 'visible' : 'hidden'"
-    >login</a
-  >
-  <a
-    routerLink="/signup"
-    [style.visibility]="!isLoggedIn() ? 'visible' : 'hidden'"
-    >sign up</a
-  >
-
+    
   <router-outlet></router-outlet>
   <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
   <!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
