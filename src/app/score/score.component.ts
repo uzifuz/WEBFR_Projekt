@@ -25,6 +25,7 @@ export class ScoreComponent implements OnInit {
 
   fetchScore(){
     let jsonObj;
+    let counter = 0;
   let scoreData = new Array();
     this.http
     .get<{ message: string }>("http://localhost:3000/highscore").subscribe((res) =>{
@@ -35,7 +36,11 @@ export class ScoreComponent implements OnInit {
       scoreData.forEach(data => {
         console.log(data);
       if(!isNaN(data['score'])){
+        if(scoreData.length > 10 && counter == 10){
+          return;
+        }
         this.userScores.push(new Score(data['email'], data['score']));
+        counter++;
       }
       });
       
